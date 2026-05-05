@@ -1,25 +1,24 @@
 import pandas as pd
 import numpy as np
 
-# CARGA DE DATOS 
 df = pd.read_csv("Archivos/creditcard.csv")
 
-# PARAMETROS 
 TAM_BLOQUE = 5000
+TARGET = "Class"
 
-# FUNCION DE LIMPIEZA POR BLOQUE
 def limpiar_bloque(bloque):
     
-    # DETECTAR NULOS
-    if bloque.isnull().values.any():
-        
-        # IMPUTACION POR MEDIANA (SOLO COLUMNAS NUMERICAS)
-        for col in bloque.select_dtypes(include=[np.number]).columns:
+    columnas_numericas = [
+        col for col in bloque.select_dtypes(include=[np.number]).columns
+        if col != TARGET
+    ]
+    
+    if bloque[columnas_numericas].isnull().values.any():
+        for col in columnas_numericas:
             mediana = bloque[col].median()
             bloque[col] = bloque[col].fillna(mediana)
     
-    # CONTROL DE VALORES EXTREMOS 
-    for col in bloque.select_dtypes(include=[np.number]).columns:
+    for col in columnas_numericas:
         q1 = bloque[col].quantile(0.25)
         q3 = bloque[col].quantile(0.75)
         iqr = q3 - q1
@@ -31,7 +30,6 @@ def limpiar_bloque(bloque):
     
     return bloque
 
-# PROCESAMIENTO POR BLOQUES 
 bloques_limpios = []
 
 for i in range(0, len(df), TAM_BLOQUE):
@@ -39,13 +37,14 @@ for i in range(0, len(df), TAM_BLOQUE):
     bloque_limpio = limpiar_bloque(bloque)
     bloques_limpios.append(bloque_limpio)
 
-# RECONSTRUCCION DEL DATASET
 df_limpio = pd.concat(bloques_limpios, ignore_index=True)
 
-# GUARDADO 
-df_limpio.to_csv("muestra_limpia.csv", index=False)
+df_limpio.to_csv("Archivos/muestra_limpia.csv", index=False)
 
-# REPORTE BASICO 
 print("Proceso terminado")
 print("Valores nulos finales:")
 print(df_limpio.isnull().sum())
+
+print("\nDistribucion de clase (antes vs despues):")
+print("Original:\n", df["Class"].value_counts())
+print("Limpio:\n", df_limpio["Class"].value_counts())

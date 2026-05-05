@@ -1,20 +1,14 @@
-#!/usr/bin/env python3
-"""
-Script para extraer un porcentaje aleatorio de filas de un CSV.
-CONFIGURACIÓN DIRECTA: edita las rutas y opciones abajo.
-"""
-
 import pandas as pd
 import sys
 
-# ========== CONFIGURACIÓN DIRECTA ==========
-ARCHIVO_ENTRADA = r"creditcard.csv"   # Ruta completa del archivo original
-ARCHIVO_SALIDA  = r"muestra.csv" # Ruta donde guardar la muestra
+# CONFIGURACIÓN DIRECTA 
+ARCHIVO_ENTRADA = r"Archivos/creditcard.csv"   # Ruta completa del archivo original
+ARCHIVO_SALIDA  = r"Archivos/muestra.csv" # Ruta donde guardar la muestra
 PORCENTAJE = 5.0           # Porcentaje a extraer (ej: 5 para 5%)
 SEMILLA = 42             # Opcional: número fijo para reproducibilidad (ej: 42)
 DELIMITADOR = ","          # Separador del CSV (',' o ';' etc.)
 CODIFICACION = "utf-8"     # Codificación del archivo (utf-8, latin1, etc.)
-# ===========================================
+
 
 def main():
     # Validar porcentaje
