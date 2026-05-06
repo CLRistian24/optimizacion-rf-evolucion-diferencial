@@ -1,0 +1,9 @@
+name: pry_cp
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - numpy
+  - scikit-learn
+prefix: /home/cristianleal/miniconda3/envs/pry_cp

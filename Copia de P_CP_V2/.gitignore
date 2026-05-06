@@ -1,0 +1,22 @@
+# Configuración de VS Code
+.vscode/
+
+# Entornos (si usas conda/virtualenv)
+env/
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+
+# Sistema
+.DS_Store
+
+# Datos / dataset
+dataset/
+Archivos/
+
+# Archivos pesados
+*.csv
+*.xlsx
+*.zip
