@@ -1,0 +1,16 @@
+COMPARACIÓN SECUENCIAL vs PARALELO
+Parámetros DE: NP=4, max_gen=3, workers=7
+
+TIEMPOS
+  Secuencial: 1492.58 s
+  Paralelo:   957.80 s
+  Speedup:    1.56x
+  Eficiencia: 0.22 (22.3%)
+
+CALIDAD
+  Fitness final secuencial: 0.848028
+  Fitness final paralelo:   0.848028
+
+ESTADÍSTICAS DE EVALUACIONES
+  Secuencial - media: 124.382s, std: 101.654s
+  Paralelo   - media: 181.437s, std: 105.763s

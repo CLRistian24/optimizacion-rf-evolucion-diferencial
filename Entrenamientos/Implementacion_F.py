@@ -3,8 +3,12 @@ import numpy as np
 import pandas as pd
 import multiprocessing as mp
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, average_precision_score
+from sklearn.metrics import (f1_score, recall_score, roc_auc_score, 
+                             confusion_matrix, ConfusionMatrixDisplay,
+                             average_precision_score)
+from sklearn.inspection import permutation_importance
 
 #  CONFIGURACIÓN COMÚN 
 RUTA_X_TRAIN = "Archivos/Division/X_train.csv"
@@ -57,7 +61,6 @@ def decodificar(v):
     }
 
 def evaluar_individuo(v, X_tr_arr, y_tr_arr, X_val_arr, y_val_arr):
-    """Evalúa un individuo sin validación cruzada (entrena en train, valida en val)"""
     params = decodificar(v)
     modelo = RandomForestClassifier(random_state=42, **params)
     modelo.fit(X_tr_arr, y_tr_arr)
@@ -223,10 +226,10 @@ print("COMPARACIÓN DE RENDIMIENTO: SECUENCIAL vs PARALELO")
 
 
 # Parámetros DE
-NP = 4
+NP = 5
 F = 0.8
 CR = 0.9
-MAX_GEN = 3
+MAX_GEN = 4
 PACIENCIA = 2
 TOL = 1e-4
 SEMILLA = 42
@@ -332,3 +335,97 @@ with open("resultados_comparacion.txt", "w", encoding="utf-8") as f:
     f.write(f"  Paralelo   - media: {np.mean(tiempos_par):.3f}s, std: {np.std(tiempos_par):.3f}s\n")
 
 print("Resultados guardados en 'resultados_comparacion.txt'")
+
+#  EVALUACIÓN FINAL EN TEST CON MÉTRICAS COMPLETAS Y MATRICES DE CONFUSIÓN
+print("EVALUACIÓN FINAL EN TEST")
+
+def evaluar_modelo_final(mejor_vec, nombre, X_train_val, y_train_val, X_test, y_test):
+    params = decodificar(mejor_vec)
+    print(f"\n--- {nombre} ---")
+    print("Hiperparámetros:")
+    for k, v in params.items():
+        print(f"  {k}: {v}")
+    
+    modelo = RandomForestClassifier(random_state=42, **params)
+    modelo.fit(X_train_val, y_train_val)
+    
+    # Predicciones
+    y_pred = modelo.predict(X_test)
+    y_prob = modelo.predict_proba(X_test)[:, 1]
+    
+    # Métricas
+    f1 = f1_score(y_test, y_pred, pos_label=1)
+    recall = recall_score(y_test, y_pred, pos_label=1)
+    auc = roc_auc_score(y_test, y_prob)
+    
+    print(f"\nMétricas en test:")
+    print(f"  F1-score:  {f1:.4f}")
+    print(f"  Recall:    {recall:.4f}")
+    print(f"  AUC-ROC:   {auc:.4f}")
+    
+    # Matriz de confusión
+    cm = confusion_matrix(y_test, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Clase 0", "Clase 1"])
+    fig, ax = plt.subplots(figsize=(6,5))
+    disp.plot(ax=ax, cmap="Blues", values_format="d")
+    ax.set_title(f"Matriz de confusión - {nombre}")
+    plt.tight_layout()
+    plt.savefig(f"matriz_confusion_{nombre.replace(' ', '_')}.png", dpi=150)
+    plt.show()
+    
+    # Importancia de características (si hay nombres de columnas)
+    if hasattr(X_train_val, 'columns'):
+        importancias = modelo.feature_importances_
+        indices = np.argsort(importancias)[::-1][:15]  # top 15
+        plt.figure(figsize=(10,6))
+        plt.title(f"Importancia de características - {nombre}")
+        plt.barh(range(len(indices)), importancias[indices][::-1], align='center')
+        plt.yticks(range(len(indices)), [X_train_val.columns[i] for i in indices][::-1])
+        plt.xlabel("Importancia")
+        plt.tight_layout()
+        plt.savefig(f"importancias_{nombre.replace(' ', '_')}.png", dpi=150)
+        plt.show()
+    
+    return {"f1": f1, "recall": recall, "auc": auc, "modelo": modelo}
+
+# Evaluar modelo secuencial
+res_seq = evaluar_modelo_final(mejor_vec_seq, "Secuencial", 
+                               X_train_val.values, y_train_val.values,
+                               X_test.values, y_test.values)
+
+# Evaluar modelo paralelo
+res_par = evaluar_modelo_final(mejor_vec_par, "Paralelo",
+                               X_train_val.values, y_train_val.values,
+                               X_test.values, y_test.values)
+
+# Comparativa final
+print("\n" + "="*60)
+print("COMPARATIVA FINAL EN TEST")
+print("="*60)
+print(f"{'Métrica':<10} {'Secuencial':<12} {'Paralelo':<12}")
+print("-"*35)
+print(f"{'F1':<10} {res_seq['f1']:<12.4f} {res_par['f1']:<12.4f}")
+print(f"{'Recall':<10} {res_seq['recall']:<12.4f} {res_par['recall']:<12.4f}")
+print(f"{'AUC-ROC':<10} {res_seq['auc']:<12.4f} {res_par['auc']:<12.4f}")
+
+# Guardar resultados en archivo
+with open("resultados_comparacion_detallados.txt", "w", encoding="utf-8") as f:
+    f.write("COMPARACIÓN SECUENCIAL vs PARALELO (con métricas finales)\n")
+    f.write(f"Parámetros DE: NP={NP}, max_gen={MAX_GEN}, workers={N_WORKERS}\n\n")
+    f.write("TIEMPOS\n")
+    f.write(f"  Secuencial: {tiempo_seq:.2f} s\n")
+    f.write(f"  Paralelo:   {tiempo_par:.2f} s\n")
+    f.write(f"  Speedup:    {speedup:.2f}x\n")
+    f.write(f"  Eficiencia: {eficiencia:.2f} ({eficiencia*100:.1f}%)\n\n")
+    f.write("MÉTRICAS EN TEST\n")
+    f.write(f"  Secuencial - F1: {res_seq['f1']:.4f}, Recall: {res_seq['recall']:.4f}, AUC: {res_seq['auc']:.4f}\n")
+    f.write(f"  Paralelo   - F1: {res_par['f1']:.4f}, Recall: {res_par['recall']:.4f}, AUC: {res_par['auc']:.4f}\n\n")
+    f.write("HIPERPARÁMETROS\n")
+    f.write("  Secuencial:\n")
+    for k, v in decodificar(mejor_vec_seq).items():
+        f.write(f"    {k}: {v}\n")
+    f.write("  Paralelo:\n")
+    for k, v in decodificar(mejor_vec_par).items():
+        f.write(f"    {k}: {v}\n")
+
+print("\nResultados guardados en 'resultados_comparacion_detallados.txt'")
