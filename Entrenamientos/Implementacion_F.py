@@ -26,7 +26,7 @@ y_train_val = pd.concat([y_train, y_val], ignore_index=True)
 
 # Espacio de búsqueda (igual para ambos)
 ESPACIO = {
-    "n_estimators":      (100.0, 500.0),
+    "n_estimators":      (10.0, 200.0),
     "max_depth":         (3.0,   50.0),
     "min_samples_split": (2.0,   50.0),
     "min_samples_leaf":  (1.0,   20.0),
@@ -262,9 +262,7 @@ print(f"Eficiencia (S / workers):   {eficiencia:.2f} ({eficiencia*100:.1f}%)")
 # Comparar calidad de la solución (fitness final)
 mejor_fitness_seq = max(hist_mejor_seq)  # porque guardamos negativo
 mejor_fitness_par = max(hist_mejor_par)
-print("\n" + "="*60)
 print("CALIDAD DE LA SOLUCIÓN (Fitness en validación)")
-print("="*60)
 print(f"Mejor fitness secuencial: {mejor_fitness_seq:.6f}")
 print(f"Mejor fitness paralelo:   {mejor_fitness_par:.6f}")
 print(f"Diferencia:               {abs(mejor_fitness_seq - mejor_fitness_par):.6f}")
@@ -320,7 +318,6 @@ print("\nGráfica guardada: comparacion_speedup.png")
 # Guardar resultados detallados en archivo
 with open("resultados_comparacion.txt", "w", encoding="utf-8") as f:
     f.write("COMPARACIÓN SECUENCIAL vs PARALELO\n")
-    f.write("="*60 + "\n")
     f.write(f"Parámetros DE: NP={NP}, max_gen={MAX_GEN}, workers={N_WORKERS}\n\n")
     f.write("TIEMPOS\n")
     f.write(f"  Secuencial: {tiempo_seq:.2f} s\n")
