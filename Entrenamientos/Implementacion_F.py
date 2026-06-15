@@ -399,11 +399,8 @@ res_par = evaluar_modelo_final(mejor_vec_par, "Paralelo",
                                X_test.values, y_test.values)
 
 # Comparativa final
-print("\n" + "="*60)
 print("COMPARATIVA FINAL EN TEST")
-print("="*60)
 print(f"{'Métrica':<10} {'Secuencial':<12} {'Paralelo':<12}")
-print("-"*35)
 print(f"{'F1':<10} {res_seq['f1']:<12.4f} {res_par['f1']:<12.4f}")
 print(f"{'Recall':<10} {res_seq['recall']:<12.4f} {res_par['recall']:<12.4f}")
 print(f"{'AUC-ROC':<10} {res_seq['auc']:<12.4f} {res_par['auc']:<12.4f}")
