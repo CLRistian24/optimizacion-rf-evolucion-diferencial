@@ -13,12 +13,12 @@ from sklearn.metrics import (
 )
 
 # rutas de los archivos, ajustar según la ubicación real
-RUTA_X_TRAIN = "Archivos/Division/X_train.csv"
-RUTA_Y_TRAIN = "Archivos/Division/y_train.csv"
-RUTA_X_VAL   = "Archivos/Division/X_val.csv"
-RUTA_Y_VAL   = "Archivos/Division/y_val.csv"
-RUTA_X_TEST  = "Archivos/Division/X_test.csv"
-RUTA_Y_TEST  = "Archivos/Division/y_test.csv"
+RUTA_X_TRAIN = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/X_train.csv"
+RUTA_Y_TRAIN = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/y_train.csv"
+RUTA_X_VAL   = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/X_val.csv"
+RUTA_Y_VAL   = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/y_val.csv"
+RUTA_X_TEST  = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/X_test.csv"
+RUTA_Y_TEST  = "/home/dani111/optimizacion-rf-evolucion-diferencial/Copia de P_CP_V2/Archivos/Division/y_test.csv"
 
 # carga de los tres conjuntos
 X_train = pd.read_csv(RUTA_X_TRAIN)
@@ -44,14 +44,15 @@ print(f"  Prueba:        {X_test.shape},  fraudes={y_test.sum()}")
 # se definen rangos discretos representativos dentro de los intervalos continuos
 # para hacer la búsqueda computacionalmente manejable
 param_grid = {
-    "n_estimators":      [100, 500, 800, 1000],
-    "max_depth":         [3, 10, 20, 50],
-    "min_samples_split": [2],
-    "min_samples_leaf":  [1],
-    "max_features":      [0.1, 0.3, 0.5, 1.0],
-    "bootstrap":         [True],
-    "class_weight":      [None],
-    "criterion":         ["gini"],
+<<<<<<< Updated upstream:Entrenamientos/Grid_Search_S.py
+    "n_estimators":      (10, 60),
+    "max_depth":         (3, 40),
+    "min_samples_split": (2, 40)
+    "min_samples_leaf":  (1, 15),
+    "max_features":      (0.15, 0.9),
+    "bootstrap":         (0,1),
+    "class_weight":      [ "balanced",None, "balanced_subsample"],
+>>>>>>> Stashed changes:Copia de P_CP_V2/Entrenamientos/Grid_Search_S.py    "criterion":         ["entropy","gini"],
 }
 
 # clasificador base sin paralelización (n_jobs=1)
@@ -65,7 +66,7 @@ cv_estratificado = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 # con desbalance extremo es más informativa que el ROC-AUC
 grid_search = GridSearchCV(
     estimator=rf_base,
-    param_grid=param_grid,
+    param_grid=ESPACIO_FINAL,
     scoring="average_precision",
     cv=cv_estratificado,
     refit=True,          # re-entrena el mejor modelo sobre todo X_trainval al terminar
