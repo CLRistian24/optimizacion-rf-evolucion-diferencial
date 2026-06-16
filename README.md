@@ -75,7 +75,7 @@ La detección de fraude financiero enfrenta dos desafíos críticos: **desbalanc
 ## Autores
 
 **Cristian Leal Rivera** - [@CLRistian24](https://github.com/cristianleal) - cristianlealrivera@email.com  
-**Daniel Islas García** - [@danislas](https://github.com/danislas) - danislas@email.com  
+**Daniel Islas García** - [@dani111993](https://github.com/danislas) - danislas@email.com  
 UPIIT - Instituto Politécnico Nacional
 
 ## Publicación
