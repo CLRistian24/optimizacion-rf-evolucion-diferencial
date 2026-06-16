@@ -1,0 +1,32 @@
+COMPARACIÓN SECUENCIAL vs PARALELO (con métricas finales)
+Parámetros DE: NP=5, max_gen=4, workers=7
+
+TIEMPOS
+  Secuencial: 3180.31 s
+  Paralelo:   1504.93 s
+  Speedup:    2.11x
+  Eficiencia: 0.30 (30.2%)
+
+MÉTRICAS EN TEST
+  Secuencial - F1: 0.8421, Recall: 0.7568, AUC: 0.9679
+  Paralelo   - F1: 0.8358, Recall: 0.7568, AUC: 0.9606
+
+HIPERPARÁMETROS
+  Secuencial:
+    n_estimators: 168
+    max_depth: 16
+    min_samples_split: 2
+    min_samples_leaf: 1
+    max_features: 0.16036038841005337
+    bootstrap: True
+    class_weight: None
+    criterion: log_loss
+  Paralelo:
+    n_estimators: 72
+    max_depth: 20
+    min_samples_split: 25
+    min_samples_leaf: 5
+    max_features: 0.2169293548019245
+    bootstrap: False
+    class_weight: None
+    criterion: entropy
