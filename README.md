@@ -74,7 +74,7 @@ paper/
 La detección de fraude financiero enfrenta dos desafíos críticos: **desbalance extremo de clases** (0.172% fraudes) e **optimización costosa** en espacios de búsqueda complejos. Este proyecto demuestra que Differential Evolution combinada con paralelismo multinivel supera métodos convencionales, mejorando simultáneamente precisión (F1 0.86 vs 0.79) y eficiencia computacional (speedup 3.81×).
 ## Autores
 
-**Cristian Leal Rivera** - [@CLRistian24](https://github.com/cristianleal) - cristianlealrivera@email.com  
+**Cristian Leal Rivera** - [@CLRistian24](https://github.com/CLRistian24) - cristianlealrivera@gmail.com  
 **Daniel Islas García** - [@dani111993](https://github.com/danislas) - danislas@email.com  
 UPIIT - Instituto Politécnico Nacional
 
